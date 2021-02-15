@@ -1,0 +1,35 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  text-align: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoi', 'Segoe UI Symbol';
+}
+
+.country-card {
+  list-style: none;
+  text-align: left;
+}
+
+.country__title {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: Roboto;
+  color: darkblue;
+}
+
+.country__item {
+  font-size: 18px;
+  font-weight: 700;
+  color: darkslategrey;
+}
