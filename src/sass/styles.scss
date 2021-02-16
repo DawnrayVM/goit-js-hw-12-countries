@@ -33,3 +33,10 @@ body {
   font-weight: 700;
   color: darkslategrey;
 }
+
+.country__flag {
+  position: relative;
+  left: 15%;
+  top: -75px;
+  border: solid 1px black;
+}
