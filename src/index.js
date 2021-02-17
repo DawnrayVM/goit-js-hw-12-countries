@@ -1,65 +1,71 @@
+import './sass/styles.scss';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/Material.css';
-import './sass/styles.scss';
-import { alert, notice, info, success, error } from '@pnotify/core';
-import { defaultModules } from '@pnotify/core';
-// import '@pnotify/bootstrap4/dist/PNotifyBootstrap4.css';
-
-// import * as Confirm from '@pnotify/confirm';
-// import '@pnotify/confirm/dist/PNotifyConfirm.css';
-
-import * as PNotifyBootstrap4 from '@pnotify/bootstrap4';
+import 'material-design-icons/iconfont/material-icons.css';
+require('typeface-roboto');
+import { notice, error } from '@pnotify/core/dist/PNotify.js';
+const { defaults } = require('@pnotify/core');
+defaults.styling = 'material';
+defaults.icons = 'material';
+defaults.mode = 'light';
+defaults.delay = '1500';
+const debounce = require('lodash.debounce');
+import fetchCountries from './js/fetchCountries';
 import countryCard from '../src/templates/country-card.hbs';
 import countryList from '../src/templates/country-list.hbs';
-// import fetchCountry from './js/fetchCountries.js';
-const debounce = require('lodash.debounce');
-
-// defaultModules.set(Material);
 
 const refs = {
   queryString: document.querySelector('.js-input'),
   card: document.querySelector('.country-card'),
 };
 
-function resetQuery() {
+function resetTemplate() {
   refs.card.innerHTML = '';
   return;
+}
+
+function countryListRenderer(data) {
+  const countries = data.map(country => {
+    return country;
+  });
+  refs.card.insertAdjacentHTML('beforeend', countryList(countries));
+}
+
+function countyCardRenderer(data) {
+  refs.card.insertAdjacentHTML('beforeend', countryCard(data[0]));
+}
+
+function renderCountryMarkup(data) {
+  //if array has more then 10 items
+  if (data.length > 10) {
+    notice({
+      title: 'Sorry!',
+      text: 'Too many matches found. Please enter a more specific query!',
+    });
+  }
+  //if array has 2-10 items
+  else if (data.length > 1 && data.length <= 10) {
+    countryListRenderer(data);
+  }
+  // if array has 1 item
+  else if (data.length === 1) {
+    countyCardRenderer(data);
+  } else {
+    error({
+      title: 'Oops...!',
+      text: "Can't find that country",
+    });
+  }
 }
 
 refs.queryString.addEventListener(
   'input',
   debounce(event => {
     event.preventDefault();
-    const query = refs.queryString.value;
+    resetTemplate();
+    const query = event.target.value;
     if (query) {
-      fetch(`https://restcountries.eu/rest/v2/name/${query}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.length > 1 && data.length <= 10) {
-            resetQuery();
-            console.log(data);
-            const countryArray = data.map(country => {
-              return country;
-            });
-            console.log(countryArray);
-            refs.card.insertAdjacentHTML(
-              'beforeend',
-              countryList(countryArray),
-            );
-          } else {
-            const country = data.map(country => {
-              return countryCard(country);
-            });
-            resetQuery();
-            refs.card.insertAdjacentHTML('beforeend', country);
-          }
-        })
-        .catch(
-          er => resetQuery(),
-          alert({
-            title: "Can't find such country!",
-          }),
-        );
+      fetchCountries(query).then(renderCountryMarkup).catch(console.log);
     }
   }, 500),
 );

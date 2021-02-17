@@ -1,13 +1,12 @@
 <h1 class="country__title">{{name}}</h1>
 <div class="country__description">
-    <ul>
-
+    <ul class="country__item">
         <li class="country__item">Capital: {{capital}}</li>
         <li class="country__item">Population: {{population}}</li>
         <li class="country__item">Languages: </li>
         <ul>
             {{#each languages}}
-            <li class="country__item">{{this.name}}</li>
+            <li class="country__languages">{{this.name}}</li>
             {{/each}}
         </ul>
     </ul>
